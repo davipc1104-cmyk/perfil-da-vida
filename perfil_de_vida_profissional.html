@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Perfil de Vida</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#07111f;--bg2:#0b1930;--card:rgba(255,255,255,.96);--text:#10233f;
+  --muted:#66758a;--blue:#2563eb;--cyan:#06b6d4;--green:#16a34a;--red:#dc2626;
+  --gold:#f59e0b;--line:#dce6f3;--shadow:0 20px 60px rgba(15,35,65,.13)
+}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(37,99,235,.14),transparent 28%),
+    radial-gradient(circle at 90% 20%,rgba(6,182,212,.12),transparent 25%),
+    linear-gradient(135deg,#eef5ff 0%,#f7f9fc 48%,#eef8ff 100%);
+  color:var(--text);min-height:100vh;overflow-x:hidden
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;
+  background-image:linear-gradient(rgba(37,99,235,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.035) 1px,transparent 1px);
+  background-size:32px 32px;z-index:-1
+}
+button,input{font:inherit}
+button{
+  cursor:pointer;border:0;border-radius:14px;padding:12px 17px;font-weight:800;
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;
+  box-shadow:0 8px 20px rgba(37,99,235,.18);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease
+}
+button:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(37,99,235,.25);filter:brightness(1.03)}
+button:active{transform:translateY(0) scale(.98)}
+button.secondary{background:#edf3fa;color:#1e293b;box-shadow:none}
+button.success{background:linear-gradient(135deg,#16a34a,#22c55e)}
+button.danger{background:linear-gradient(135deg,#dc2626,#ef4444)}
+button.warning{background:linear-gradient(135deg,#d97706,#f59e0b)}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.top{
+  position:sticky;top:0;z-index:50;background:rgba(7,17,31,.92);backdrop-filter:blur(18px);
+  color:white;padding:12px 18px;display:flex;gap:14px;align-items:center;justify-content:space-between;
+  box-shadow:0 10px 35px rgba(0,0,0,.18);border-bottom:1px solid rgba(255,255,255,.08)
+}
+.brand{font-weight:950;font-size:18px;letter-spacing:.03em;display:flex;align-items:center;gap:8px}
+.brand:after{content:"•";color:#38bdf8;animation:pulse 1.7s infinite}
+.top-actions{display:flex;gap:7px;flex-wrap:wrap}
+.top button{padding:8px 11px;font-size:12px;border:1px solid rgba(255,255,255,.1)}
+.wrap{max-width:1180px;margin:auto;padding:24px 18px 60px}
+.screen{display:none}.screen.active{display:block;animation:screenIn .45s ease both}
+.card{
+  background:var(--card);border:1px solid rgba(210,223,239,.8);border-radius:24px;padding:20px;margin:15px 0;
+  box-shadow:var(--shadow);position:relative;overflow:hidden
+}
+.card:before{
+  content:"";position:absolute;left:0;top:0;width:100%;height:3px;
+  background:linear-gradient(90deg,#2563eb,#06b6d4,transparent 75%);opacity:.7
+}
+.hero{
+  text-align:center;padding:58px 22px 46px;min-height:430px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;background:
+  radial-gradient(circle at 50% 0%,rgba(37,99,235,.11),transparent 42%),rgba(255,255,255,.97)
+}
+.hero h1{
+  font-size:clamp(36px,7vw,66px);line-height:.95;margin:8px 0 16px;color:#081a35;
+  letter-spacing:-.055em
+}
+.hero p{max-width:780px;margin:10px auto 22px;line-height:1.7;color:#536273;font-size:15px}
+.big{font-size:17px;padding:15px 24px;border-radius:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.player-box{
+  border:1px solid var(--line);border-radius:18px;padding:15px;background:linear-gradient(180deg,#fff,#f7faff);
+  transition:.2s;box-shadow:0 8px 25px rgba(20,45,80,.06)
+}
+.player-box:hover{transform:translateY(-3px);border-color:#9ec5ff}
+.player-box h3{margin:0 0 8px}
+.player-box input,.modal input{
+  width:100%;padding:12px;border:1px solid #cbd8e8;border-radius:12px;background:#fff;outline:none
+}
+.player-box input:focus,.modal input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.hint{font-size:13px;color:var(--muted)}
+.center{text-align:center}
+.stage{
+  display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:950;color:#2563eb;
+  text-transform:uppercase;letter-spacing:.12em;background:#eaf2ff;border-radius:999px;padding:7px 10px
+}
+.stat{
+  display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #edf2f7;font-size:13px
+}
+.stat:last-child{border:0}
+.scoreboard{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;
+  margin-bottom:4px
+}
+.mini{
+  background:rgba(255,255,255,.88);border:1px solid #dfe8f4;border-radius:17px;padding:12px;
+  box-shadow:0 8px 24px rgba(20,45,80,.06);transition:.2s
+}
+.mini:hover{transform:translateY(-2px)}
+.mini strong{display:block;margin-bottom:5px}
+.timeline{display:flex;gap:6px;overflow:auto;padding:8px 0;scrollbar-width:thin}
+.year{min-width:105px;text-align:center;border-radius:14px;background:#e9eff8;padding:10px;font-weight:700}
+.year.now{background:linear-gradient(135deg,#2563eb,#0ea5e9);color:white;box-shadow:0 8px 20px rgba(37,99,235,.2)}
+.year.done{background:#b9e7c8}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eaf2ff;color:#2456a6;font-size:12px;font-weight:900}
+.tip{
+  background:linear-gradient(135deg,#fff9e7,#fffdf5);border:1px solid #f5df9c;border-left:5px solid #f59e0b;
+  padding:16px;border-radius:14px;line-height:1.65;box-shadow:0 10px 25px rgba(245,158,11,.08)
+}
+.secret{
+  background:linear-gradient(145deg,#081526,#102d50);color:#fff;border-radius:18px;padding:20px;text-align:center;
+  box-shadow:0 18px 45px rgba(0,20,50,.25);border:1px solid rgba(96,165,250,.2)
+}
+.choice{display:grid;grid-template-columns:1fr;gap:10px}
+.choice button{
+  background:#f8fafc;color:#18212f;border:2px solid #dbe4f0;text-align:left;box-shadow:none
+}
+.choice button:hover{border-color:#2563eb;background:#eff6ff;box-shadow:0 8px 20px rgba(37,99,235,.1)}
+.choice button.selected{border-color:#2563eb;background:#dbeafe}
+.answer{
+  font-size:clamp(28px,6vw,44px);font-weight:950;text-align:center;color:#10233f;letter-spacing:-.03em
+}
+.dice{font-size:72px;text-align:center;min-height:90px;animation:diceFloat 1.3s ease-in-out infinite}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3f6fa;padding:12px;border-radius:12px;overflow:auto}
+.toast{
+  position:fixed;right:18px;bottom:18px;z-index:100;background:#081526;color:white;padding:13px 17px;border-radius:14px;
+  display:none;box-shadow:0 18px 40px rgba(0,0,0,.22);animation:toastIn .25s ease
+}
+.modal{
+  position:fixed;inset:0;background:rgba(2,10,22,.72);backdrop-filter:blur(8px);display:none;z-index:80;
+  padding:20px;overflow:auto
+}
+.modal.show{display:block;animation:fadeIn .2s ease}
+.modal-inner{max-width:850px;margin:40px auto;background:#fff;border-radius:24px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.modal-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.small{font-size:12px;color:#64748b}
+.danger-text{color:#b42318;font-weight:800}.success-text{color:#117a38;font-weight:800}
+.rank{
+  display:grid;grid-template-columns:55px 1fr auto;gap:10px;align-items:center;padding:15px;
+  border:1px solid #dce5ef;border-radius:16px;margin:9px 0;background:white;transition:.2s
+}
+.rank:hover{transform:translateX(3px)}
+.rank.win{border:2px solid #f1b72b;background:#fffdf3;box-shadow:0 10px 30px rgba(245,158,11,.1)}
+.footer-note{text-align:center;color:#64748b;font-size:12px;margin:20px 0}
+.reveal{opacity:0;transform:translateY(28px) scale(.985);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.float{animation:float 4s ease-in-out infinite}
+.progress{
+  height:8px;background:#e7eef8;border-radius:99px;overflow:hidden;margin:10px 0 15px
+}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#06b6d4);border-radius:99px;transition:width .5s ease}
+@keyframes screenIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes diceFloat{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-7px)}}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+  .top{padding:10px 12px}.brand{font-size:15px}.top-actions{max-width:68%;justify-content:flex-end}
+  .top button{font-size:10px;padding:7px 8px}.wrap{padding:12px 10px 45px}.card{border-radius:20px;padding:16px;margin:12px 0}
+  .hero{min-height:430px;padding:45px 16px}.hero h1{font-size:42px}.hero p{font-size:14px}
+  .grid{grid-template-columns:1fr}.rank{grid-template-columns:42px 1fr}.rank>div:last-child{grid-column:2;text-align:left}
+  .modal{padding:9px}.modal-inner{margin:12px auto;padding:15px;border-radius:20px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="brand">🧭 PERFIL DE VIDA</div>
+<div class="top-actions">
+<button class="secondary" onclick="showRules()">Regras</button>
+<button class="secondary" onclick="showTable()">Tabela de Consulta</button>
+<button class="secondary" onclick="showCalc()">Calculadora</button>
+</div>
+</header>
+
+<main class="wrap">
+<section id="home" class="screen active">
+<div class="card hero">
+<div style="font-size:54px">🧭❤️📚</div>
+<h1>Perfil de Vida</h1>
+<p>Um jogo sobre escolhas, informação, prevenção, dinheiro, estudos e rede de apoio. <b>Prevenir é proteger o Projeto de Vida.</b> E, diante de uma gravidez precoce, informação e apoio podem ajudar a continuar estudando e planejando o futuro.</p>
+<button class="big" onclick="startSetup()">Começar partida</button>
+</div>
+<div class="card">
+<h3>Como funciona?</h3>
+<div class="grid">
+<div>🎯 <b>3 a 6 jogadores</b><br><span class="hint">Cada pessoa conduz um jovem dos 15 aos 21 anos.</span></div>
+<div>🃏 <b>Perfil + Dilemas</b><br><span class="hint">Conhecimento, decisões e consequências.</span></div>
+<div>🤝 <b>Sem moralismo</b><br><span class="hint">A responsabilidade é compartilhada e existe rede de apoio.</span></div>
+</div>
+</div>
+</section>
+
+<section id="setup" class="screen">
+<div class="card">
+<div class="stage">Preparação</div><h2>Quem vai jogar?</h2>
+<p class="hint">Escolha de 3 a 6 jogadores. O primeiro da lista será o primeiro Mediador.</p>
+<div class="players" id="playerInputs"></div>
+<div style="margin-top:14px"><button onclick="finishSetup()">Continuar</button></div>
+</div>
+</section>
+
+<section id="game" class="screen">
+<div id="gameContent"></div>
+</section>
+
+<section id="end" class="screen">
+<div class="card center">
+<div style="font-size:48px">🏆</div><h1>Fim de jogo</h1>
+<p>Confira o ranking final. A Meta agora é revelada para todos.</p>
+<div id="ranking"></div>
+<button onclick="location.reload()">Jogar de novo</button>
+</div>
+</section>
+</main>
+
+<div id="modal" class="modal"><div class="modal-inner" id="modalContent"></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+"use strict";
+
+/* ===== CALIBRAGEM ===== */
+const CFG={
+ metaBonus:8, starMin:0, starMax:5, initialSave:1000, initialDebt:0, initialStars:1,
+ formationCost:500, interestSave:1.10, interestDebt:1.20, annualBase:200, annualStar:100,
+ riskMax:10, maxUnexpected:1
+};
+const MULT_SAVE=[1.10,1.21,1.331,1.4641,1.6105,1.7716];
+const MULT_DEBT=[1.20,1.44,1.728,2.0736,2.4883,2.9860];
+
+/* ===== DADOS ===== */
+const METAS=[
+ {n:"Faculdade",s:4,r:2000},
+ {n:"Curso técnico e primeiro emprego",s:3,r:3000},
+ {n:"Empreender",s:2,r:4500},
+ {n:"Carreira no esporte ou na arte",s:2,r:3500}
+];
+
+const APOIOS=[
+"Conversa com a escola","Orientação da UBS","Apoio da família","Rede de colegas",
+"Professor de confiança","Profissional de saúde","Serviço de assistência","Plano de estudos",
+"Pessoa adulta de confiança","Grupo de apoio"
+];
+
+const RETOMADAS=[
+ {t:"Plano de continuidade",a:"Pedir ajuda à família e à escola e montar um plano de continuidade",c:200,s:0},
+ {t:"Pausa planejada",a:"Pausar os estudos por um ano para trabalhar",c:-400,s:-1},
+ {t:"Apoio + organização",a:"Combinar apoio em casa, acompanhamento de saúde e horário de estudos",c:150,s:0},
+ {t:"Retorno gradual",a:"Reduzir temporariamente a carga de atividades e manter o vínculo escolar",c:100,s:0},
+ {t:"Rede compartilhada",a:"Dividir responsabilidades com pessoas de confiança e organizar um orçamento",c:250,s:0},
+ {t:"Orientação e matrícula",a:"Buscar orientação sobre direitos, escola e serviços para planejar a continuidade",c:120,s:0}
+];
+
+const DILEMAS=[
+ {t:"Informação ou achismo",cat:"saúde",o:[
+  {x:"Conversar com profissional da UBS ou do Programa Saúde na Escola",c:-100,a:1},
+  {x:"Confiar só em redes sociais e amigos",c:0,r:3}]},
+ {t:"O bico que coincide com as aulas",cat:"escola e trabalho",o:[
+  {x:"Aceitar e faltar",c:600,s:-1},{x:"Recusar",c:0},{x:"Conciliar com turno reduzido",c:300}]},
+ {t:"O celular novo (R$ 1.200)",cat:"dinheiro",o:[
+  {x:"Pagar à vista",c:-1200},{x:"Parcelar",d:1200},{x:"Comprar usado",c:-500}]},
+ {t:"Curso técnico",cat:"escola e trabalho",o:[
+  {x:"Pagar o curso",c:-900,s:2},{x:"Aplicar os R$ 900",c:900}]},
+ {t:"Prevenção no cotidiano",cat:"saúde",o:[
+  {x:"Buscar orientação e acesso a preservativos",c:-80,a:1},{x:"Deixar para depois",c:0,r:3}]},
+ {t:"Consulta de rotina",cat:"saúde",o:[
+  {x:"Marcar atendimento na UBS",c:-50,a:1},{x:"Não procurar orientação",c:0,r:2}]},
+ {t:"Conversa sobre métodos",cat:"saúde",o:[
+  {x:"Conversar com profissional e comparar métodos",c:-80,a:1},{x:"Escolher só pelo que ouviu de amigos",c:0,r:3}]},
+ {t:"PSE na escola",cat:"saúde",o:[
+  {x:"Participar de uma atividade do PSE",c:0,a:1},{x:"Não participar",c:0,r:2}]},
+ {t:"Trabalho de fim de semana",cat:"escola e trabalho",o:[
+  {x:"Trabalhar todos os dias",c:500,s:-1},{x:"Trabalhar só no fim de semana",c:250},{x:"Recusar para preservar os estudos",c:0}]},
+ {t:"Primeiro currículo",cat:"escola e trabalho",o:[
+  {x:"Fazer um curso rápido",c:-200,s:1},{x:"Procurar emprego imediatamente",c:300},{x:"Esperar mais um ano",c:0}]},
+ {t:"Estágio e horário",cat:"escola e trabalho",o:[
+  {x:"Aceitar estágio com conflito de horário",c:500,s:-1},{x:"Negociar horário",c:250},{x:"Recusar",c:0}]},
+ {t:"Material para estudar",cat:"escola e trabalho",o:[
+  {x:"Comprar material",c:-250,s:1},{x:"Pedir emprestado",c:0},{x:"Adiar",c:0}]},
+ {t:"Reserva ou consumo",cat:"dinheiro",o:[
+  {x:"Guardar R$ 400",c:400},{x:"Gastar com lazer",c:0},{x:"Comprar algo necessário",c:-300}]},
+ {t:"Dívida apertando",cat:"dinheiro",o:[
+  {x:"Quitar parte da dívida",c:-300,d:-300},{x:"Manter o dinheiro guardado",c:0},{x:"Pedir novo crédito",d:500}]},
+ {t:"Renda extra",cat:"dinheiro",o:[
+  {x:"Guardar metade e usar metade",c:250},{x:"Guardar tudo",c:500},{x:"Gastar tudo agora",c:0}]},
+ {t:"Compra parcelada",cat:"dinheiro",o:[
+  {x:"Comprar parcelado",d:700},{x:"Esperar e juntar",c:0},{x:"Comprar usado",c:-350}]},
+ {t:"Meta financeira",cat:"dinheiro",o:[
+  {x:"Definir um valor mensal para a meta",c:0,s:1},{x:"Guardar só quando sobrar",c:0},{x:"Investir em consumo",c:-200}]},
+ {t:"Imprevisto no orçamento",cat:"dinheiro",o:[
+  {x:"Usar parte da reserva",c:-250},{x:"Pegar empréstimo",d:300},{x:"Adiar uma compra",c:0}]},
+ {t:"Quem ajuda quem?",cat:"rede de apoio",o:[
+  {x:"Conversar com uma pessoa adulta de confiança",c:-50,a:1},{x:"Resolver tudo sozinho",c:0},{x:"Pedir ajuda só depois de um problema",c:0,r:2}]},
+ {t:"Rede de colegas",cat:"rede de apoio",o:[
+  {x:"Montar uma rede para compartilhar informações",c:0,a:1},{x:"Guardar dúvidas para si",c:0},{x:"Seguir apenas comentários online",c:0,r:2}]},
+ {t:"Família e planejamento",cat:"rede de apoio",o:[
+  {x:"Conversar sobre orçamento e responsabilidades",c:0,a:1},{x:"Evitar o assunto",c:0},{x:"Decidir sozinho",c:0,r:2}]},
+ {t:"Professor de confiança",cat:"rede de apoio",o:[
+  {x:"Pedir ajuda para organizar os estudos",c:0,a:1,s:1},{x:"Não contar a ninguém",c:0},{x:"Abandonar uma atividade",c:0,s:-1}]},
+ {t:"Serviços disponíveis",cat:"rede de apoio",o:[
+  {x:"Buscar UBS e escola para conhecer caminhos",c:-50,a:1},{x:"Pesquisar sozinho sem confirmar a fonte",c:0,r:2},{x:"Não buscar informação",c:0}]},
+ {t:"Responsabilidade compartilhada",cat:"saúde",o:[
+  {x:"Planejar prevenção em conjunto",c:-50,a:1},{x:"Deixar a decisão para uma pessoa",c:0,r:2},{x:"Evitar conversar",c:0}]}
+];
+
+const PERFIS=[
+ {cat:"Coisa",a:"Preservativo/camisinha",d:[
+"Existo em versão masculina e feminina.","Minha embalagem tem data de validade, e isso importa.","Sou distribuído gratuitamente pelo SUS.","Sou feito de látex ou de outros materiais.","Além de ajudar a evitar a gravidez, protejo contra infecções sexualmente transmissíveis.","Só funciono se for usado corretamente, em toda relação.","Muita gente me chama de camisinha."],f:"O Ministério da Saúde recomenda garantir o acesso a preservativos e contraceptivos sem barreiras desnecessárias (Brasil, 2024).",q:"Qual a média diária de nascimentos de mães adolescentes em 2022? 315.606 ÷ 365 ≈ 865 por dia."},
+ {cat:"Lugar",a:"Programa Saúde na Escola, PSE",d:[
+"Sou uma política pública que une duas áreas do governo.","Atuo onde o jovem passa boa parte do dia.","Minhas ações incluem vacinação, avaliação de saúde e prevenção.","Equipes de saúde e professores trabalham juntos em mim.","Posso levar educação sexual e reprodutiva para as salas de aula.","O Ministério da Saúde me cita entre os caminhos para prevenir a gravidez na adolescência.","Minha sigla é PSE."],f:"A ampliação da educação sexual nas escolas pelo PSE é um dos caminhos recomendados (Brasil, 2024).",q:"Qual a variação percentual dos nascimentos de mães adolescentes de 2013 (559.991) para 2022 (315.606)? ≈ −43,6%."},
+ {cat:"Dado",a:"Gravidez como motivo de abandono escolar",d:[
+"Apareço em uma pesquisa do IBGE de 2019.","A pesquisa ouviu jovens de 14 a 29 anos que não concluíram a educação básica.","Sou um dos motivos que as mulheres apontam para ter deixado a escola.","Estou empatado com a necessidade de trabalhar, com 23,8%.","Só a falta de interesse (24,1%) ficou um pouco à minha frente.","Atingo cerca de 1 em cada 4 mulheres nessa situação.","Prevenir-me é proteger o Projeto de Vida."],f:"Isso equivale a cerca de 1,0 milhão de mulheres, pela estimativa do grupo (IBGE, 2020).",q:"10,1 milhões × 0,417 × 0,238 ≈ quantas mulheres? ≈ 1,0 milhão."},
+ {cat:"Direito",a:"Direito à educação",d:["É garantido por lei.","Alcança crianças, adolescentes e jovens.","A escola é parte importante da sua concretização.","A gravidez não apaga o direito de estudar.","A matrícula e a permanência escolar são temas de proteção.","A legislação brasileira protege o acesso à educação.","Sou um direito fundamental: educação."],f:"A Constituição Federal e o ECA reconhecem a educação como direito de crianças e adolescentes (Brasil).",q:"Se uma escola tem 500 alunos e 12% participam de uma atividade, quantos alunos participam? 60."},
+ {cat:"Lugar",a:"Unidade Básica de Saúde, UBS",d:["Faço parte da atenção primária.","Estou presente nos territórios.","Posso orientar sobre saúde sexual e reprodutiva.","Também faço encaminhamentos quando necessário.","É possível buscar informações e atendimento na rede pública.","Minha equipe pode incluir profissionais de diferentes áreas.","Sou conhecida pela sigla UBS."],f:"A Atenção Primária à Saúde é a principal porta de entrada do SUS (Ministério da Saúde).",q:"Se 8 de cada 10 jovens procuram informação antes de decidir, em 100 jovens quantos seriam? 80."},
+ {cat:"Direito",a:"ECA",d:["Sou uma lei brasileira.","Protejo crianças e adolescentes.","Meu nome completo fala de direitos e proteção.","Fui criado em 1990.","Considero crianças e adolescentes sujeitos de direitos.","Trato de educação, saúde, convivência familiar e outros direitos.","Minha sigla tem três letras: ECA."],f:"O Estatuto da Criança e do Adolescente é a Lei nº 8.069/1990 (Brasil).",q:"Se uma turma tem 30 estudantes e 20% participam, quantos são? 6."},
+ {cat:"Pessoa",a:"Adolescente",d:["Estou numa fase de desenvolvimento.","Tenho direitos próprios.","Posso construir metas para o futuro.","A escola pode fazer parte do meu projeto.","Decisões de hoje podem afetar oportunidades futuras.","Informação ajuda a tomar decisões mais conscientes.","Tenho entre 12 e 18 anos para fins do ECA."],f:"O ECA considera adolescente a pessoa entre doze e dezoito anos de idade (Lei 8.069/1990).",q:"Se 3 pessoas de 6 têm uma meta, qual percentual? 50%."},
+ {cat:"Dado",a:"315.606 nascimentos",d:["Sou um número de 2022.","Estou relacionado à idade materna.","Faço parte das estatísticas de nascimentos no Brasil.","Represento uma parcela dos nascimentos daquele ano.","Sou menor que o número registrado em 2013.","Mostro a dimensão do tema da gravidez na adolescência.","Em 2022, foram 315.606 nascimentos de mães adolescentes."],f:"Dados citados nas Notas Técnicas do Ministério da Saúde (Brasil, 2024/2025).",q:"315.606 representa aproximadamente 12,3% de um total de 2,56 milhões? Sim, aproximadamente."},
+ {cat:"Dado",a:"14.293 nascimentos de mães de 10 a 14 anos",d:["Sou um dado de 2022.","Estou dentro das estatísticas de nascimentos.","Refiro-me a uma faixa etária muito jovem.","Minha média diária é inferior a 50.","Dividido por 365, fico perto de 39.","Estou relacionado à faixa de 10 a 14 anos.","Em 2022 foram 14.293 nascimentos nessa faixa."],f:"Ministério da Saúde, Notas Técnicas 2/2024 e 2/2025.",q:"14.293 ÷ 365 ≈ 39 por dia."},
+ {cat:"Direito",a:"Estupro de vulnerável",d:["É um crime previsto no Código Penal.","A proteção envolve menores de 14 anos.","Não depende apenas da existência de consentimento.","A lei trata a pessoa menor de 14 como vulnerável nessa situação.","A relação sexual com menor de 14 anos é crime.","É uma regra de proteção de crianças e adolescentes.","Sou chamado de estupro de vulnerável."],f:"Art. 217-A do Código Penal brasileiro. A regra legal protege menores de 14 anos.",q:"Se 71,6% de 56.820 casos são de vítimas até 13 anos, aproximadamente quantos casos? 40.662."},
+ {cat:"Dado",a:"71,6%",d:["Sou uma porcentagem.","Apareço em estatísticas de violência sexual.","Estou associada a vítimas de até 13 anos.","Faço parte de dados de 2022.","Ajudo a dimensionar um problema de proteção.","Estou relacionada a 56.820 registros citados no diagnóstico.","Em 2022, 71,6% dos estupros de vulnerável tinham vítimas de até 13 anos."],f:"Dados citados no diagnóstico do Ministério da Saúde, com referência a 2022.",q:"56.820 × 0,716 ≈ 40.662."},
+ {cat:"Pessoa",a:"Menino corresponsável",d:["Também participo das decisões de prevenção.","Não sou um observador externo.","A responsabilidade pela prevenção não deve recair só sobre meninas.","Posso buscar informação sobre contracepção e IST.","Posso conversar sobre uso de preservativo.","Posso contribuir para decisões mais seguras.","Sou parte da corresponsabilidade."],f:"A prevenção da gravidez e das IST envolve corresponsabilidade e acesso à informação (Ministério da Saúde).",q:"Se dois jovens dividem igualmente R$ 200, quanto cabe a cada um? R$ 100."},
+ {cat:"Coisa",a:"Projeto de Vida",d:["Sou uma forma de pensar o futuro.","Posso incluir estudos, trabalho, relações e objetivos.","Não sou uma promessa imutável.","Posso ser revisto conforme novas experiências.","Informação ajuda minhas escolhas.","Prevenção pode proteger meus planos.","Meu nome reúne planos e objetivos para a vida."],f:"O Projeto de Vida é trabalhado na educação como planejamento de trajetórias, escolhas e objetivos.",q:"Se uma meta exige R$ 2.000 e você já tem R$ 800, quanto falta? R$ 1.200."},
+ {cat:"Direito",a:"Matrícula da gestante",d:["Relaciono-me com o direito à educação.","A gravidez não elimina o vínculo com a escola.","A legislação protege a continuidade escolar.","Meu tema envolve adolescentes gestantes.","A estudante pode buscar orientação para permanecer estudando.","A escola deve respeitar seus direitos educacionais.","Sou o direito de matrícula e continuidade da gestante na educação."],f:"A legislação brasileira protege a educação de adolescentes gestantes e a continuidade dos estudos (Brasil).",q:"Se uma estudante tinha 80% de frequência e faltou 10 aulas em 100, qual nova frequência? 70%."},
+ {cat:"Direito",a:"Licença-maternidade",d:["Relaciono-me ao trabalho.","É um direito previsto na legislação trabalhista e previdenciária.","Protege o período após o nascimento ou situações previstas em lei.","Não é uma licença escolar.","Tem duração prevista em lei para trabalhadoras abrangidas.","Busca proteger mãe e bebê.","Sou chamada de licença-maternidade."],f:"A Constituição Federal prevê licença à gestante, sem prejuízo do emprego e do salário, nos termos legais.",q:"Se uma pessoa recebe R$ 1.500 e guarda 20%, quanto guarda? R$ 300."},
+ {cat:"Dado",a:"28,2%",d:["Sou uma porcentagem.","Apareço em dados de nascimentos de mães adolescentes.","Estou associada a mães indígenas.","É uma proporção maior que a registrada entre mães brancas no dado citado.","Posso ser comparada com 9,2%.","A razão entre os dois números fica perto de 3,1.","O valor citado para mães indígenas é 28,2%."],f:"Dados do diagnóstico do Ministério da Saúde: 28,2% entre mães indígenas e 9,2% entre brancas.",q:"28,2 ÷ 9,2 ≈ 3,1."},
+ {cat:"Dado",a:"9,2%",d:["Sou uma porcentagem.","Estou em dados sobre mães adolescentes.","Sou usada numa comparação de grupos.","No dado citado, fico abaixo de 28,2%.","A comparação envolve mães indígenas e brancas.","A razão 28,2 ÷ 9,2 é cerca de 3,1.","O valor citado para mães brancas é 9,2%."],f:"Dados do diagnóstico do Ministério da Saúde.",q:"9,2 × 3,1 ≈ 28,5; a razão exata dos dados é aproximadamente 3,1."},
+ {cat:"Dado",a:"16,7%",d:["Sou uma porcentagem.","Apareço em dados de mães adolescentes.","Estou entre os grupos raciais citados no diagnóstico.","Fico entre 13% e 28,2%.","Sou maior que o dado de 13% citado para outro grupo.","Faço parte do recorte de raça/cor.","O valor citado para mães pardas é 16,7%."],f:"Dados do diagnóstico do Ministério da Saúde.",q:"Se 16,7% de 1.000, quantas pessoas? 167."},
+ {cat:"Dado",a:"13%",d:["Sou uma porcentagem.","Apareço no recorte de mães adolescentes.","Estou no conjunto de dados de raça/cor.","Fico abaixo de 16,7%.","Também fico abaixo de 28,2%.","É um valor citado para um grupo específico.","O valor citado para mães pretas é 13%."],f:"Dados do diagnóstico do Ministério da Saúde.",q:"13% de 1.000 = 130."},
+ {cat:"Dado",a:"47,1%",d:["Sou uma porcentagem de internações.","Relaciono-me a meninas de 15 a 19 anos.","O dado é de 2022.","Estou relacionado a gravidez, parto e puerpério.","Fui citado como primeira causa de internação nessa faixa.","Sou quase metade do conjunto citado.","O valor é 47,1%."],f:"Ministério da Saúde, dado de 2022 citado no diagnóstico.",q:"47,1% de 10.000 = 4.710."},
+ {cat:"Pessoa",a:"Profissional da UBS",d:["Trabalho na rede pública de saúde.","Posso orientar sem julgamento.","Atuo em serviços de atenção primária.","Posso ajudar com dúvidas sobre saúde sexual e reprodutiva.","Também posso encaminhar para outros serviços.","A UBS é um dos lugares onde posso atuar.","Sou um profissional de saúde da UBS."],f:"A UBS integra a Atenção Primária à Saúde do SUS (Ministério da Saúde).",q:"Se uma consulta custa R$ 0 no serviço público, quanto sobra de R$ 100? R$ 100."},
+ {cat:"Coisa",a:"Método contraceptivo",d:["Sou usado para prevenir uma gravidez.","Existem diferentes tipos de métodos.","Alguns são de uso contínuo e outros de uso na relação.","Nenhum método deve ser escolhido sem considerar orientação adequada.","Preservativos também ajudam na prevenção de IST.","Informação ajuda a escolher e usar corretamente.","Sou um método contraceptivo."],f:"Ministério da Saúde orienta sobre métodos contraceptivos e prevenção de IST.",q:"Se um método reduz um risco pela metade, de 20% para quanto? 10%."},
+ {cat:"Dado",a:"19,3%",d:["Sou uma porcentagem de 2013.","Relaciono-me aos nascimentos de mães adolescentes.","Sou maior que o dado de 2022 citado.","Ajudo a comparar dois anos.","Em 2013, o valor citado foi 559.991 nascimentos.","Em 2022, a proporção caiu para 12,3%.","Em 2013, a proporção citada foi 19,3%."],f:"Ministério da Saúde, dados citados nas Notas Técnicas 2/2024 e 2/2025.",q:"19,3% − 12,3% = 7 pontos percentuais."},
+ {cat:"Dado",a:"12,3%",d:["Sou uma porcentagem de 2022.","Relaciono-me a nascimentos de mães adolescentes.","Represento cerca de 1 em cada 8 nascimentos.","Sou menor que o dado de 2013.","Estou ligado ao número 315.606.","Posso ser comparado a 19,3%.","O valor citado para 2022 é 12,3%."],f:"Ministério da Saúde, Notas Técnicas 2/2024 e 2/2025.",q:"1 ÷ 8 = 12,5%, aproximação próxima de 12,3%."},
+ {cat:"Lugar",a:"Escola",d:["Sou um espaço de aprendizagem.","Posso apoiar projetos de vida.","Tenho papel na proteção de direitos.","Posso atuar em conjunto com serviços de saúde.","Posso acolher e orientar estudantes.","Também posso ajudar na continuidade dos estudos.","Sou a escola."],f:"A educação e a articulação entre escola e saúde são parte das políticas de proteção e promoção de direitos.",q:"Se 4 de 5 estudantes continuam estudando, qual percentual? 80%."},
+ {cat:"Coisa",a:"Preservativo interno",d:["Sou um método de barreira.","Posso ser usado por quem tem vagina.","Tenho uso associado à prevenção de IST.","Preciso ser utilizado corretamente.","É importante observar validade e embalagem.","Faço parte das opções de prevenção.","Sou uma versão interna do preservativo."],f:"Ministério da Saúde: preservativos integram estratégias de prevenção de IST e gravidez.",q:"Se 10 pessoas recebem 2 unidades cada, quantas unidades? 20."},
+ {cat:"Coisa",a:"Informação confiável",d:["Posso mudar uma decisão.","Tenho fonte verificável.","Sou diferente de um boato.","Posso vir de profissionais e órgãos públicos.","Ajudo a compreender direitos e serviços.","Na saúde, informação de qualidade é importante.","Sou informação confiável."],f:"O Ministério da Saúde recomenda acesso a informação e serviços de saúde sexual e reprodutiva.",q:"Se você verifica 3 fontes e descarta 1 boato, quantas fontes confiáveis restam? Depende das fontes verificadas."},
+ {cat:"Pessoa",a:"Estudante gestante",d:["Continuo sendo uma estudante.","Tenho direito à educação.","Posso precisar de uma rede de apoio.","Minha rotina pode exigir adaptações.","Posso buscar orientação na escola e nos serviços de saúde.","Uma gravidez não define todo meu futuro.","Sou uma estudante gestante."],f:"A proteção do direito à educação alcança adolescentes gestantes (Brasil).",q:"Se uma estudante precisa cumprir 200 horas e já fez 150, faltam 50 horas."},
+ {cat:"Direito",a:"Proteção integral",d:["É um princípio do direito brasileiro.","Relaciono-me a crianças e adolescentes.","Reconheço que precisam de proteção especial.","Incluo direitos como saúde e educação.","O ECA é uma referência importante.","A responsabilidade é de família, sociedade e Estado.","Sou o princípio da proteção integral."],f:"A proteção integral é fundamento do Estatuto da Criança e do Adolescente.",q:"Se 3 grupos compartilham uma tarefa igualmente, cada um assume 1/3."},
+ {cat:"Pessoa",a:"Rede de apoio",d:["Posso ser formada por pessoas diferentes.","Ajudo em momentos difíceis.","Posso incluir família, escola e serviços.","Não preciso resolver tudo sozinho.","Posso contribuir para a continuidade dos estudos.","Também posso apoiar decisões e planejamento.","Sou uma rede de apoio."],f:"Redes de apoio e articulação de serviços são estratégias importantes para proteção e continuidade de projetos.",q:"Se 4 pessoas ajudam com R$ 50 cada, qual o total? R$ 200."},
+ {cat:"Lugar",a:"Serviço de saúde",d:["Faço parte de uma rede.","Posso orientar sobre prevenção.","Tenho profissionais preparados.","Posso acolher dúvidas.","Alguns serviços integram o SUS.","UBS é um exemplo de porta de entrada.","Sou um serviço de saúde."],f:"A rede do SUS organiza serviços em diferentes níveis de atenção.",q:"R$ 500 divididos por 5 pessoas = R$ 100 para cada."},
+ {cat:"Coisa",a:"Camisa de proteção esportiva",d:["Não sou um método contraceptivo.","Posso aparecer em campanhas de esporte.","Minha função é proteger em atividades físicas.","Não substituo preservativos.","Posso fazer parte de uma rotina saudável.","Meu uso depende da modalidade.","Sou uma proteção esportiva."],f:"Atividade física integra hábitos de vida saudável, mas não substitui métodos de prevenção sexual.",q:"Se um treino custa R$ 20 por sessão durante 5 sessões, totaliza R$ 100."},
+ {cat:"Dado",a:"865 por dia",d:["Sou uma média.","Uso um número anual de 2022.","Estou relacionado a mães adolescentes.","Divido 315.606 por 365.","O resultado fica perto de 865.","Represento uma média diária, não uma contagem exata de cada dia.","A média é aproximadamente 865 por dia."],f:"Cálculo com 315.606 nascimentos de mães adolescentes em 2022, dados do Ministério da Saúde.",q:"865 × 365 ≈ 315.725, próximo do total devido ao arredondamento."},
+ {cat:"Direito",a:"Saúde",d:["Sou um direito fundamental.","Alcanço crianças e adolescentes.","O SUS participa da minha garantia.","Incluo prevenção e cuidado.","Posso ser acessado na atenção primária.","A UBS é uma porta de entrada.","Sou o direito à saúde."],f:"A Constituição Federal e o ECA reconhecem direitos relacionados à saúde e proteção de crianças e adolescentes.",q:"Se 25% de 400 pessoas procuram atendimento, são 100 pessoas."}
+];
+
+/* ===== ESTADO ===== */
+let G={players:[],round:1,year:1,mediator:0,usedProfiles:[],usedDilemas:[],phase:"profile",
+profile:null,tip:0,active:[],guessIndex:null,bonusEnd:0,bonusWinner:null,dilema:null,dilemaChoices:[],birthdayStep:"dilema",secretIndex:0,secretType:"",supportCards:[],currentRetake:null,dice:null,ended:false};
+
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function money(n){return "R$ "+Math.round(n).toLocaleString("pt-BR")}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function toast(t){$("toast").textContent=t;$("toast").style.display="block";clearTimeout(toast.tm);toast.tm=setTimeout(()=>$("toast").style.display="none",2200)}
+function screen(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ $(id).classList.add("active");
+ setTimeout(()=>{window.scrollTo({top:0,behavior:"smooth"});observeReveals()},30);
+}
+function observeReveals(){
+ const items=document.querySelectorAll(".card:not(.reveal),.rank:not(.reveal),.mini:not(.reveal)");
+ items.forEach(el=>el.classList.add("reveal"));
+ requestAnimationFrame(()=>{
+   items.forEach(el=>{
+     if(el.getBoundingClientRect().top < window.innerHeight*.92) el.classList.add("in");
+   });
+ });
+ if(!window._revealObserver){
+   window._revealObserver=new IntersectionObserver(es=>es.forEach(e=>{
+     if(e.isIntersecting)e.target.classList.add("in");
+   }),{threshold:.12});
+ }
+ document.querySelectorAll(".reveal").forEach(el=>window._revealObserver.observe(el));
+}
+function modal(html){$("modalContent").innerHTML=html;$("modal").classList.add("show")}
+function closeModal(){$("modal").classList.remove("show")}
+function rnd(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function round10(n){return Math.round(n/10)*10}
+function addMoney(p,v){if(v>=0)p.save+=v;else{let x=Math.min(p.save,-v);p.save-=x;p.debt+=(-v-x)}}
+function adjustDebt(p,v){p.debt=Math.max(0,p.debt+v)}
+function addStar(p,v){p.stars=clamp(p.stars+v,CFG.starMin,CFG.starMax)}
+function reserve(p){return p.save-p.debt}
+
+/* ===== SETUP ===== */
+function startSetup(){
+ let h="";
+ for(let i=0;i<6;i++)h+=`<div class="player-box"><h3>Jogador ${i+1}</h3><input id="name${i}" maxlength="18" placeholder="Nome"></div>`;
+ $("playerInputs").innerHTML=h;screen("setup");
+}
+function finishSetup(){
+ let names=[];
+ for(let i=0;i<6;i++){let n=$("name"+i).value.trim();if(n)names.push(n)}
+ if(names.length<3||names.length>6){toast("Digite nomes para 3 a 6 jogadores.");return}
+ G.players=names.map((n,i)=>({name:n,save:CFG.initialSave,debt:CFG.initialDebt,stars:CFG.initialStars,pc:0,meta:rnd(METAS),supports:[],unexpected:0,age:15,year:1}));
+ G.players.forEach(p=>p.meta={...p.meta});
+ G.mediator=0;G.round=1;G.year=1;G.phase="profile";G.secretIndex=0;
+ setupSecretMeta();
+}
+function setupSecretMeta(){
+ G.secretType="meta";G.secretIndex=0;
+ secretMeta();
+}
+function secretMeta(){
+ let p=G.players[G.secretIndex];
+ modal(`<div class="center"><div class="stage">Carta Meta secreta</div><h2>🎯 Passe o aparelho para ${esc(p.name)}</h2><p>Só ${esc(p.name)} deve ver esta tela.</p><button onclick="revealMeta()">Ver minha meta</button><div id="secretMeta"></div></div>`);
+}
+function revealMeta(){
+ let p=G.players[G.secretIndex];
+ $("secretMeta").innerHTML=`<div class="secret" style="margin-top:15px"><div class="small" style="color:#cbd5e1">SUA META</div><h2>${esc(p.meta.n)}</h2><p>Estrelas ≥ ${p.meta.s} e Reserva líquida ≥ ${money(p.meta.r)}</p></div><button style="margin-top:12px" onclick="hideMeta()">Esconder e passar</button>`;
+}
+function hideMeta(){
+ G.secretIndex++;
+ if(G.secretIndex<G.players.length){secretMeta();return}
+ closeModal();renderProfileIntro();
+}
+
+/* ===== PLACAR ===== */
+function scoreboard(){
+ return `<div class="card"><h3>Placar</h3><div class="scoreboard">${G.players.map(p=>`<div class="mini"><strong>${esc(p.name)}</strong><span>⭐ ${p.stars} · 🧠 ${p.pc} PC</span><br>💰 ${money(p.save)} · 💳 ${money(p.debt)}</div>`).join("")}</div></div>`
+}
+
+/* ===== PERFIL ===== */
+function renderProfileIntro(){
+ G.phase="profile";G.tip=0;G.active=G.players.map((_,i)=>i);G.guessIndex=null;G.profile=drawProfile();
+ $("gameContent").innerHTML=scoreboard()+`
+ <div class="card center"><div class="stage">Rodada ${G.round} de 12 · Perfil</div>
+ <h2>🎴 Carta Perfil</h2><p>O Mediador é <b>${esc(G.players[G.mediator].name)}</b>.</p>
+ <p class="hint">A carta já foi sorteada. O Mediador verá a resposta e conduzirá as dicas.</p>
+ <button onclick="mediatorSecret()">Passar aparelho ao Mediador</button></div>`;
+ screen("game");
+}
+function drawProfile(){
+ let avail=PERFIS.filter((_,i)=>!G.usedProfiles.includes(i));
+ if(!avail.length){G.usedProfiles=[];avail=PERFIS}
+ let obj=rnd(avail),idx=PERFIS.indexOf(obj);G.usedProfiles.push(idx);return obj;
+}
+function mediatorSecret(){
+ modal(`<div class="center"><div class="stage">Tela do Mediador</div><h2>🔒 ${esc(G.players[G.mediator].name)}</h2><p>Não deixe os outros jogadores verem.</p><button onclick="showAnswer()">Ver resposta</button><div id="medAnswer"></div></div>`);
+}
+function showAnswer(){
+ $("medAnswer").innerHTML=`<div class="secret" style="margin-top:14px"><div>${esc(G.profile.cat)}</div><h2>${esc(G.profile.a)}</h2><p>Leia apenas as dicas na ordem. Depois confirme os palpites.</p></div><button style="margin-top:12px" onclick="startTips()">Esconder e começar</button>`;
+}
+function startTips(){closeModal();renderTip()}
+function nextEligible(){
+ let m=G.mediator;
+ for(let step=1;step<=G.players.length;step++){let i=(m+step)%G.players.length;if(G.active.includes(i))return i}
+ return null;
+}
+function renderTip(){
+ if(G.tip>=7||!G.active.length){revealProfile();return}
+ let idx=nextEligible();
+ if(idx===null){revealProfile();return}
+ $("gameContent").innerHTML=scoreboard()+`
+ <div class="card center"><div class="stage">Rodada ${G.round} · Dica ${G.tip+1} de 7</div>
+ <div class="progress" aria-label="Progresso das dicas"><span style="width:${((G.tip+1)/7)*100}%"></span></div>
+ <h2>👤 Vez de ${esc(G.players[idx].name)}</h2>
+ <p>O Mediador lê esta dica em voz alta:</p>
+ <div class="tip"><b>Dica ${G.tip+1}:</b> ${esc(G.profile.d[G.tip])}</div>
+ <p class="hint">O jogador pode dar um palpite ou passar. Se errar, fica fora desta rodada.</p>
+ <div class="grid"><button onclick="playerGuess(${idx})">Dar palpite</button><button class="secondary" onclick="playerPass(${idx})">Passar</button></div>
+ </div>`;
+}
+function playerGuess(idx){
+ G.guessIndex=idx;
+ $("gameContent").innerHTML=scoreboard()+`
+ <div class="card center"><div class="stage">Confirmação do Mediador</div>
+ <h2>🔒 Passe para ${esc(G.players[G.mediator].name)}</h2>
+ <p>${esc(G.players[idx].name)} deu um palpite em voz alta.</p>
+ <button class="success" onclick="confirmHit()">Acertou</button>
+ <button class="danger" onclick="confirmMiss()">Errou</button></div>`;
+}
+function playerPass(idx){toast(`${G.players[idx].name} passou.`);G.tip++;renderTip()}
+function confirmHit(){
+ let p=G.players[G.guessIndex],pts=8-(G.tip+1);
+ p.pc+=pts;
+ G.guessIndex=null;
+ $("gameContent").innerHTML=scoreboard()+`<div class="card center reveal in"><div class="stage">Acerto confirmado</div><div style="font-size:64px" class="float">🎉</div><h2>${esc(p.name)} acertou!</h2><p>Ganhou <b>${pts} PC</b> pela dica ${G.tip+1}.</p><p class="hint">O Mediador recebe +1 PC no fechamento da rodada.</p><button onclick="revealProfile()">Continuar para a rodada</button></div>`;
+}
+function confirmMiss(){
+ G.active=G.active.filter(i=>i!==G.guessIndex);G.guessIndex=null;G.tip++;
+ if(!G.active.length||G.tip>=7)revealProfile();else renderTip();
+}
+function revealProfile(){
+ let med=G.players[G.mediator];
+ if(!G._mediatorAwarded){med.pc+=1;G._mediatorAwarded=true}
+ $("gameContent").innerHTML=scoreboard()+`
+ <div class="card center"><div class="stage">Resposta</div><div class="answer">${esc(G.profile.a)}</div>
+ <p class="tip"><b>Você sabia?</b><br>${esc(G.profile.f)}</p>
+ <p><b>Pergunta-bônus:</b> ${esc(G.profile.q)}</p>
+ <p class="hint">Primeiro a responder corretamente em até 30 segundos ganha +1 PC.</p>
+ <button onclick="startBonus()">Iniciar 30 segundos</button></div>`;
+}
+function startBonus(){
+ G.bonusEnd=Date.now()+30000;G.bonusWinner=null;bonusTick();
+}
+function bonusTick(){
+ let left=Math.max(0,G.bonusEnd-Date.now());
+ $("gameContent").innerHTML=scoreboard()+`<div class="card center"><div class="stage">Pergunta-bônus</div><h2>⏱️ ${Math.ceil(left/1000)}s</h2>
+ <p>${esc(G.profile.q)}</p><p>O Mediador decide quem acertou primeiro.</p>
+ <div class="grid">${G.players.map((p,i)=>`<button onclick="bonusWin(${i})">${esc(p.name)} acertou</button>`).join("")}</div>
+ <button class="secondary" onclick="bonusNobody()">Ninguém</button></div>`;
+ if(left>0)G.bonusTimer=setTimeout(bonusTick,250);else bonusNobody();
+}
+function bonusWin(i){clearTimeout(G.bonusTimer);G.players[i].pc++;toast(`${G.players[i].name} ganhou +1 PC.`);finishRound()}
+function bonusNobody(){clearTimeout(G.bonusTimer);finishRound()}
+function finishRound(){
+ G._mediatorAwarded=false;
+ if(G.round%2===0){G.phase="birthday";G.birthdayStep="dilema";startBirthday()}else{G.round++;advanceMediator();renderProfileIntro()}
+}
+function advanceMediator(){G.mediator=(G.mediator+1)%G.players.length}
+
+/* ===== ANIVERSÁRIO ===== */
+function drawDilema(){
+ let avail=DILEMAS.filter((_,i)=>!G.usedDilemas.includes(i));
+ if(!avail.length){G.usedDilemas=[];avail=DILEMAS}
+ let obj=rnd(avail),idx=DILEMAS.indexOf(obj);G.usedDilemas.push(idx);return obj;
+}
+function startBirthday(){
+ G.dilema=drawDilema();G.dilemaChoices=Array(G.players.length).fill(null);G.secretIndex=0;
+ birthdaySecret();
+}
+function birthdaySecret(){
+ let p=G.players[G.secretIndex],d=G.dilema;
+ modal(`<div class="center"><div class="stage">🎂 Aniversário · Dilema</div><h2>🔒 Passe para ${esc(p.name)}</h2><p>Escolha em segredo. Os demais não devem ver.</p>
+ <div class="card"><b>${esc(d.t)}</b><p class="hint">Categoria: ${esc(d.cat)}</p></div>
+ <div class="choice">${d.o.map((o,i)=>`<button onclick="chooseDilema(${i})"><b>${String.fromCharCode(65+i)})</b> ${esc(o.x)}</button>`).join("")}</div></div>`);
+}
+function chooseDilema(i){
+ G.dilemaChoices[G.secretIndex]=i;G.secretIndex++;
+ if(G.secretIndex<G.players.length){birthdaySecret();return}
+ closeModal();revealDilema();
+}
+function revealDilema(){
+ $("gameContent").innerHTML=scoreboard()+`<div class="card"><div class="stage">Aniversário · Resultado do Dilema</div><h2>🎂 ${esc(G.dilema.t)}</h2>
+ ${G.players.map((p,i)=>`<div class="stat"><span>${esc(p.name)} · opção ${String.fromCharCode(65+G.dilemaChoices[i])}</span><b>${esc(G.dilema.o[G.dilemaChoices[i]].x)}</b></div>`).join("")}
+ <div class="center" style="margin-top:14px"><button onclick="applyDilemas()">Aplicar efeitos</button></div></div>`;
+}
+function applyDilemas(){
+ G.players.forEach((p,i)=>{
+  let o=G.dilema.o[G.dilemaChoices[i]];
+  if(o.c)addMoney(p,o.c);
+  if(o.d)adjustDebt(p,o.d);
+  if(o.s)addStar(p,o.s);
+  if(o.a)p.supports.push(rnd(APOIOS));
+  if(o.r&&!p.unexpected)rollRisk(i,o.r);
+ });
+ let riskers=G.players.filter(p=>p.unexpected===1&&p._riskPending);
+ if(riskers.length){showPendingRisks();return}
+ birthdayInvest();
+}
+function rollRisk(i,k){G.players[i]._riskPending=true;G.players[i]._riskK=k}
+function showPendingRisks(){
+ let i=G.players.findIndex(p=>p._riskPending);
+ if(i<0){birthdayInvest();return}
+ let p=G.players[i];G.dice=null;
+ $("gameContent").innerHTML=scoreboard()+`<div class="card center"><div class="stage">Risco de ${esc(p.name)}</div>
+ <h2>🎲 Risco ${p._riskK} em 10</h2><p>O jogador rola um d10. Se sair ${p._riskK} ou menos, acontece o Imprevisto de Vida.</p>
+ <div class="dice" id="dice">🎲</div><button onclick="rollRiskNow(${i})">Rolar d10</button></div>`;
+}
+function rollRiskNow(i){
+ let n=Math.floor(Math.random()*10)+1;
+ $("dice").textContent="🎲 "+n;
+ G.players[i]._riskPending=false;G.players[i]._riskK=null;
+ if(n<=G.dilema.o[G.dilemaChoices[i]].r){triggerUnexpected(i);return}
+ toast(`${G.players[i].name} passou pelo risco.`);
+ setTimeout(showPendingRisks,500);
+}
+function triggerUnexpected(i){
+ let p=G.players[i];if(p.unexpected){showPendingRisks();return}
+ p.unexpected=1;addMoney(p,-400);addStar(p,-1);p._retakeIndex=i;
+ modal(`<div class="center"><div class="stage">Imprevisto de Vida</div><div style="font-size:50px">🤝</div>
+ <h2>${esc(p.name)}, você não está sozinho.</h2><p><b>Uma gravidez não planejada aconteceu.</b> A responsabilidade é compartilhada.</p>
+ <p>Você paga R$ 400, perde 1 Estrela e escolhe uma Carta Retomada.</p>
+ <p>Você tem <b>${p.supports.length}</b> Carta(s) Apoio.</p>
+ <button onclick="retakeSecret(${i})">Escolher Retomada</button></div>`);
+}
+function retakeSecret(i){
+ let p=G.players[i];
+ modal(`<div class="center"><div class="stage">Carta Retomada</div><h2>🔒 Passe para ${esc(p.name)}</h2>
+ <p>Escolha como seguir. É possível usar uma Carta Apoio para cancelar a perda da Estrela OU zerar o custo desta Retomada.</p>
+ <div class="choice">${RETOMADAS.map((r,j)=>`<button onclick="chooseRetake(${i},${j})"><b>${String.fromCharCode(65+j)}) ${esc(r.t)}</b><br>${esc(r.a)}<br><span class="small">Efeito: ${r.c>=0?"+":""}${money(r.c)} · Estrelas ${r.s>=0?"+":""}${r.s}</span></button>`).join("")}</div></div>`);
+}
+function chooseRetake(i,j){
+ let p=G.players[i],r=RETOMADAS[j];
+ modal(`<div class="center"><h2>Usar Carta Apoio?</h2><p>Você tem ${p.supports.length} carta(s).</p>
+ <button onclick="applyRetake(${i},${j},'none')">Não usar</button>
+ ${p.supports.length?`<button class="success" onclick="applyRetake(${i},${j},'star')">Cancelar perda da Estrela</button><button class="warning" onclick="applyRetake(${i},${j},'cost')">Zerar custo da Retomada</button>`:""}</div>`);
+}
+function applyRetake(i,j,use){
+ let p=G.players[i],r=RETOMADAS[j];
+ if(r.c<0)addMoney(p,-r.c);else if(r.c>0)addMoney(p,-r.c);
+ if(use==="star"){addStar(p,1);p.supports.pop()}
+ if(use==="cost"&&p.supports.length)p.supports.pop();
+ if(use==="cost"&&r.c<0){/* custo negativo significa ganho; não zera ganho */} 
+ if(use==="cost"&&r.c>0){addMoney(p,r.c)}
+ if(r.s)addStar(p,r.s);
+ closeModal();toast(`${p.name} escolheu ${r.t}.`);
+ setTimeout(showPendingRisks,400);
+}
+function birthdayInvest(){
+ G.birthdayStep="invest";G.secretIndex=0;renderInvest();
+}
+function renderInvest(){
+ $("gameContent").innerHTML=scoreboard()+`<div class="card"><div class="stage">Aniversário · Investir em Formação</div>
+ <h2>📚 Formação e dívida</h2><p>Você pode pagar R$ 500 para ganhar +1 Estrela, no máximo uma vez neste Aniversário. Também pode usar a Poupança para quitar Dívida.</p>
+ ${G.players.map((p,i)=>`<div class="card"><h3>${esc(p.name)}</h3><p>💰 ${money(p.save)} · 💳 ${money(p.debt)} · ⭐ ${p.stars}</p>
+ <div class="grid"><button onclick="formation(${i})" ${p._formationUsed?"disabled":""}>${p._formationUsed?"Já investiu":"Pagar R$ 500 e +1 ⭐"}</button>
+ <div><input id="pay${i}" type="number" min="0" max="${Math.floor(p.save)}" placeholder="Valor para quitar dívida" style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><button class="secondary" onclick="payDebt(${i})" style="margin-top:5px">Quitar dívida</button></div></div></div>`).join("")}
+ <div class="center"><button onclick="applyInterest()">Concluir formação</button></div></div>`;
+}
+function formation(i){let p=G.players[i];if(p._formationUsed||p.save<500)return toast("Não é possível investir agora.");p.save-=500;addStar(p,1);p._formationUsed=true;renderInvest()}
+function payDebt(i){let p=G.players[i],v=Math.max(0,Number($("pay"+i).value)||0);v=Math.min(v,p.save,p.debt);p.save-=v;p.debt-=v;renderInvest()}
+function applyInterest(){
+ G.players.forEach(p=>{p.save=round10(p.save*CFG.interestSave);p.debt=round10(p.debt*CFG.interestDebt);p.save+=CFG.annualBase+CFG.annualStar*p.stars;p.age++;p.year++;p._formationUsed=false});
+ G.year++;
+ G.players.forEach(p=>{delete p._riskPending;delete p._riskK});
+ let calc=`<div class="card"><div class="stage">Fechamento do ano</div><h2>💰 Juros + renda</h2>${G.players.map(p=>`<div class="stat"><span>${esc(p.name)}</span><b>${money(p.save)} · dívida ${money(p.debt)} · ⭐ ${p.stars}</b></div>`).join("")}<p class="hint">Poupança × 1,10; Dívida × 1,20; arredondamento ao múltiplo de R$ 10 e depois renda de R$ 200 + R$ 100 × Estrelas.</p><div class="center"><button onclick="nextAfterBirthday()">Avançar na Linha do Tempo</button></div></div>`;
+ $("gameContent").innerHTML=scoreboard()+calc;
+}
+function nextAfterBirthday(){
+ if(G.round>=12){finishGame();return}
+ G.round++;advanceMediator();renderProfileIntro();
+}
+
+/* ===== FINAL ===== */
+function finishGame(){
+ G.ended=true;
+ let arr=G.players.map(p=>{let r=reserve(p),meta=r>=p.meta.r&&p.stars>=p.meta.s,pf=p.pc+r/500+3*p.stars+(meta?CFG.metaBonus:0);return{p,r,meta,pf}}).sort((a,b)=>b.pf-a.pf||b.p.stars-a.p.stars||b.p.pc-a.p.pc);
+ $("ranking").innerHTML=arr.map((x,i)=>`<div class="rank ${i===0?"win":""}"><div style="font-size:24px">${i+1}º</div><div><b>${esc(x.p.name)}</b><br><span class="small">PC ${x.p.pc} · ⭐ ${x.p.stars} · Reserva ${money(x.r)} · Meta: ${esc(x.p.meta.n)} — ${x.meta?"cumprida":"não cumprida"}</span></div><div><b>PF ${x.pf.toFixed(1)}</b><br><span class="${x.meta?"success-text":"danger-text"}">${x.meta?"✓ +8":"✗ +0"}</span></div></div>`).join("")+`<div class="card"><div class="formula">${arr.map(x=>`${esc(x.p.name)}: ${x.p.pc} + (${x.r.toFixed(2)} ÷ 500) + 3×${x.p.stars} + ${x.meta?8:0} = ${x.pf.toFixed(1)} PF`).join("<br>")}</div></div>`;
+ screen("end");
+}
+
+/* ===== REGRAS / CONSULTA / CALCULADORA ===== */
+function showRules(){
+ modal(`<div class="modal-head"><h2>📘 Regras rápidas</h2><button class="secondary" onclick="closeModal()">Fechar</button></div>
+ <p><b>1.</b> São 12 rodadas. Nas pares acontece um Aniversário.</p>
+ <p><b>2.</b> No Perfil, o Mediador lê 7 dicas. O primeiro acerto recebe 8 − número da dica em PC. O Mediador recebe 1 PC.</p>
+ <p><b>3.</b> Errou = sai da rodada. Passou = continua.</p>
+ <p><b>4.</b> No bônus há 30 segundos. O Mediador escolhe quem acertou.</p>
+ <p><b>5.</b> No Aniversário: Dilema → Formação/quitação → juros → renda → avança o ano.</p>
+ <p><b>6.</b> Gastos que excedem a Poupança viram Dívida. Estrelas ficam entre 0 e 5.</p>
+ <p><b>7.</b> Imprevisto de Vida: R$ 400, −1 ⭐, Retomada e máximo de uma ocorrência por jogador.</p>
+ <p><b>8.</b> Final: PF = PC + Reserva líquida ÷ 500 + 3×Estrelas + 8 se cumprir a Meta.</p>`);
+}
+function showTable(){
+ modal(`<div class="modal-head"><h2>📊 Tabela de Consulta</h2><button class="secondary" onclick="closeModal()">Fechar</button></div>
+ <table style="width:100%;border-collapse:collapse"><tr><th>Ano</th><th>Poupança</th><th>Dívida</th></tr>${[0,1,2,3,4,5].map(i=>`<tr><td>${i+1}</td><td>${MULT_SAVE[i]}</td><td>${MULT_DEBT[i]}</td></tr>`).join("")}</table>
+ <p class="hint">Multiplicadores acumulados conforme a tabela de consulta do jogo.</p>`);
+}
+function showCalc(){
+ modal(`<div class="modal-head"><h2>🧮 Calculadora</h2><button class="secondary" onclick="closeModal()">Fechar</button></div>
+ <input id="calc" style="width:100%;font-size:22px;padding:12px;border:1px solid #cbd5e1;border-radius:10px" placeholder="Ex.: 1000*1.1+300">
+ <div class="grid" style="margin-top:10px">${["7","8","9","/","4","5","6","*","1","2","3","-","0",".","(",")","+","="].map(x=>`<button class="${x==="="? "success":""}" onclick="calcKey('${x}')">${x}</button>`).join("")}</div>
+ <div id="calcResult" class="formula" style="margin-top:12px">Resultado: —</div>`);
+}
+function calcKey(k){
+ let e=$("calc");if(k==="="){try{$("calcResult").textContent="Resultado: "+Function('"use strict";return ('+e.value.replace(/[^0-9+\-*/(). ]/g,"")+')')()}catch{$("calcResult").textContent="Resultado: expressão inválida"}}else e.value+=k;
+}
+
+/* ===== INICIALIZAÇÃO ===== */
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+const _uiObserver=new MutationObserver(()=>{clearTimeout(window._uiTimer);window._uiTimer=setTimeout(observeReveals,20)});
+_uiObserver.observe(document.getElementById("gameContent"),{childList:true,subtree:true});
+_uiObserver.observe(document.getElementById("modalContent"),{childList:true,subtree:true});
+window.addEventListener("load",observeReveals);
+</script>
+</body>
+</html>
